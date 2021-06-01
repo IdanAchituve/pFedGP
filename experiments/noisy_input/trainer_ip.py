@@ -214,11 +214,6 @@ def build_tree(clients, client_id, curr_X_bar):
     client_X_bar = curr_X_bar[list(label_map.keys()), ...]
 
     GPs[client_id].build_base_tree(X, offset_labels, client_X_bar)  # build tree
-    # add GP params to optimizer - don't train them
-    params = {'params': (p for n, p in GPs[client_id].named_parameters() if 'outputscale' in n or 'lengthscale' in n),
-              'weight_decay': 0.0, 'lr': args.lr}
-    GPs[client_id].client_optimizer.add_param_group(params)
-
     return GPs[client_id], label_map, X, offset_labels
 
 criteria = torch.nn.CrossEntropyLoss()
