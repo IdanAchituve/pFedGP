@@ -1,4 +1,4 @@
-from pFedGP.node import NodepFedGPFull, NodepFedGPIPData, NodepFedGPIPCompute, NodepFedGPFullBound
+from pFedGP.node import NodepFedGPFull, NodepFedGPIPData, NodepFedGPIPCompute
 from pFedGP.class_splits import *
 from utils import (detach_to_numpy, pytorch_take)
 import logging
