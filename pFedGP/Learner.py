@@ -11,7 +11,6 @@ class Model(nn.Module):
         super(Model, self).__init__()
         self.args = args
         self.tree = None
-        self.NN_classifier = True
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, x, y, to_print=True, *args, **kwargs):
@@ -30,7 +29,7 @@ class pFedGPFullLearner(Model):
         self.n_output = n_output
 
     def forward(self, z, y, to_print=True):
-        loss = self.criterion(self.cls_net(z), y) if self.NN_classifier else self.tree.train_tree(z, y, to_print)
+        loss = self.tree.train_tree(z, y, to_print)
         return loss
 
     def forward_eval(self, X_train, Y_train, X_test, Y_test, is_first_iter=False):
@@ -54,8 +53,7 @@ class pFedGPIPDataLearner(Model):
         self.n_output = n_output
 
     def forward(self, z, y, X_bar, to_print=True):
-        loss = self.criterion(self.cls_net(z), y) if self.NN_classifier \
-            else self.tree.train_tree(z, y, X_bar, to_print)
+        loss = self.tree.train_tree(z, y, X_bar, to_print)
         return loss
 
     def forward_eval(self, X_train, Y_train, X_test, Y_test, X_bar, is_first_iter=False):
