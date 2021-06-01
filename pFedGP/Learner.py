@@ -1,5 +1,5 @@
 import torch.nn as nn
-from pFedGP.tree import BinaryTreepFedGPFull, BinaryTreepFedGPFullBound, BinaryTreepFedGPIPData, \
+from pFedGP.tree import BinaryTreepFedGPFull, BinaryTreepFedGPIPData, \
                         BinaryTreepFedGPIPCompute
 from utils import *
 

@@ -4,6 +4,7 @@ from gpytorch.utils.quadrature import GaussHermiteQuadrature1D
 from torch import nn
 from pFedGP.kernel_class import OneClassGPModel
 from torch.distributions import MultivariateNormal
+import torch.nn.functional as F
 
 from utils import *
 

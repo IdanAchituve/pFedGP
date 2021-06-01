@@ -3,8 +3,8 @@ import pypolyagamma
 from gpytorch.utils.quadrature import GaussHermiteQuadrature1D
 from torch import nn
 from pFedGP.kernel_class import OneClassGPModel
-from sklearn.model_selection import train_test_split
 from scipy.special import logsumexp
+import torch.nn.functional as F
 
 from utils import *
 
