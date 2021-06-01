@@ -279,7 +279,6 @@ for step in step_iter:
         for i in range(args.inner_steps):
 
             # init optimizers
-            GPs[client_id].client_optimizer.zero_grad()
             optimizer.zero_grad()
 
             # With GP take all data
@@ -328,7 +327,6 @@ for step in step_iter:
             loss.backward()
             torch.nn.utils.clip_grad_norm_(curr_global_net.parameters(), 50)
             optimizer.step()
-            GPs[client_id].client_optimizer.step()
 
             train_avg_loss += loss.item() * offset_labels.shape[0]
             num_samples += offset_labels.shape[0]
