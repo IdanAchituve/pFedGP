@@ -28,9 +28,6 @@ class pFedGPFullLearner(Model):
     def __init__(self, args, n_output=2):
         super(pFedGPFullLearner, self).__init__(args)
         self.n_output = n_output
-        self.node_optimizer = torch.optim.SGD(self.cls_net.parameters(), lr=args.lr, weight_decay=args.wd, momentum=0.9) \
-                              if args.optimizer == 'sgd' \
-                              else torch.optim.Adam(self.cls_net.parameters(), lr=args.lr, weight_decay=args.wd)
 
     def forward(self, z, y, to_print=True):
         loss = self.criterion(self.cls_net(z), y) if self.NN_classifier else self.tree.train_tree(z, y, to_print)
@@ -55,9 +52,6 @@ class pFedGPIPDataLearner(Model):
     def __init__(self, args, n_output=2):
         super(pFedGPIPDataLearner, self).__init__(args)
         self.n_output = n_output
-        self.node_optimizer = torch.optim.SGD(self.cls_net.parameters(), lr=args.lr, weight_decay=args.wd, momentum=0.9) \
-                              if args.optimizer == 'sgd' \
-                              else torch.optim.Adam(self.cls_net.parameters(), lr=args.lr, weight_decay=args.wd)
 
     def forward(self, z, y, X_bar, to_print=True):
         loss = self.criterion(self.cls_net(z), y) if self.NN_classifier \
