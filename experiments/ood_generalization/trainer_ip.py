@@ -168,7 +168,7 @@ ip_method = pFedGPIPDataLearner if args.method == 'pFedGP-data'\
 GPs = torch.nn.ModuleList([])
 for client_id in range(args.num_clients):
     # GP instance
-    GPs.append(ip_method(args, device))
+    GPs.append(ip_method(args, num_classes))
 
 # Inducing locations
 X_bar = nn.Parameter(torch.randn((num_classes, args.num_inducing_points, args.embed_dim), device=device) * 0.01,
