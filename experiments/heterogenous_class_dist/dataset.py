@@ -54,7 +54,7 @@ def get_datasets(data_name, dataroot, normalize=True, val_size=10000):
         train_size = len(dataset) - val_size
         train_set, val_set = torch.utils.data.random_split(dataset, [train_size, val_size])
     else:
-        raise ValueError("choose data_name from ['cinic10', 'cifar10', 'cifar100', controlled_cifar10]")
+        raise ValueError("choose data_name from ['cifar10', 'cifar100']")
 
     return train_set, val_set, test_set
 
@@ -73,7 +73,7 @@ def get_num_classes_samples(dataset):
             data_labels_list = np.array(dataset.targets)
         else:
             data_labels_list = dataset.targets
-    elif hasattr(dataset, "datafolder"):
+    elif hasattr(dataset, "dataset"):
         if isinstance(dataset.dataset.targets, list):
             data_labels_list = np.array(dataset.dataset.targets)[dataset.indices]
         else:
