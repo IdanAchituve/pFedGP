@@ -7,19 +7,25 @@ dependencies:
   - _libgcc_mutex=0.1=main
   - _pytorch_select=0.1=cpu_0
   - blas=1.0=mkl
-  - ca-certificates=2021.5.25=h06a4308_1
-  - certifi=2021.5.30=py38h06a4308_0
+  - brotlipy=0.7.0=py38h8df0ef7_1001
+  - ca-certificates=2021.5.30=ha878542_0
+  - certifi=2021.5.30=py38h578d9bd_0
   - cffi=1.14.5=py38h261ae71_0
+  - chardet=4.0.0=py38h578d9bd_1
+  - cryptography=3.4.7=py38ha5dfef3_0
   - cudatoolkit=11.0.221=h6bb024c_0
   - dbus=1.13.18=hb2f20db_0
   - expat=2.4.1=h2531618_2
+  - filelock=3.0.12=pyh9f0ad1d_0
   - fontconfig=2.13.1=h6c09931_0
   - freetype=2.10.4=h5ab3b9f_0
+  - gdown=3.13.0=pyhd8ed1ab_0
   - glib=2.68.2=h36276a3_0
   - gpytorch=1.4.2=pyhd8ed1ab_0
   - gst-plugins-base=1.14.0=h8213a91_2
   - gstreamer=1.14.0=h28cd5cc_2
   - icu=58.2=he6710b0_3
+  - idna=2.10=pyh9f0ad1d_0
   - intel-openmp=2019.4=243
   - joblib=1.0.1=pyhd3eb1b0_0
   - jpeg=9b=h024ee3a_2
@@ -55,14 +61,17 @@ dependencies:
   - pillow=8.2.0=py38he98fc37_0
   - pip=21.1.1=py38h06a4308_0
   - pycparser=2.20=pyh9f0ad1d_2
+  - pyopenssl=20.0.1=pyhd8ed1ab_0
   - pyparsing=2.4.7=pyhd3eb1b0_0
   - pyqt=5.9.2=py38h05f1152_4
+  - pysocks=1.7.1=py38h578d9bd_3
   - python=3.8.10=hdb3f193_7
   - python-dateutil=2.8.1=pyhd3eb1b0_0
   - python_abi=3.8=1_cp38
   - pytorch=1.7.1=py3.8_cuda11.0.221_cudnn8.0.5_0
   - qt=5.9.7=h5867ecd_1
   - readline=8.1=h27cfd23_0
+  - requests=2.25.1=pyhd3deb0d_0
   - scikit-learn=0.24.2=py38ha9443f7_0
   - setuptools=52.0.0=py38h06a4308_0
   - sip=4.19.13=py38he6710b0_0
@@ -71,8 +80,10 @@ dependencies:
   - tk=8.6.10=hbc83047_0
   - torchvision=0.8.2=py38_cu110
   - tornado=6.1=py38h27cfd23_0
+  - tqdm=4.61.0=pyhd8ed1ab_0
   - typing-extensions=3.7.4.3=0
   - typing_extensions=3.7.4.3=py_0
+  - urllib3=1.26.5=pyhd8ed1ab_0
   - wheel=0.36.2=pyhd3eb1b0_0
   - xz=5.2.5=h7b6447c_0
   - zlib=1.2.11=h7b6447c_3
@@ -83,6 +94,5 @@ dependencies:
     - pypolyagamma==1.2.3
     - scipy==1.6.3
     - six==1.16.0
-    - tqdm==4.61.0
-prefix: /cortex/users/idan/software/anaconda3/envs/pFedGP
+prefix: /anaconda3/envs/pFedGP
 
