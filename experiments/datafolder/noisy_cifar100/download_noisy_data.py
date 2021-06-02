@@ -1,5 +1,5 @@
 import gdown
 
-url = 'https://drive.google.com/uc?id=1FYgoksNhDr_2WwQ7L0nVgZ_d9MRpvTh6'
+url = 'https://drive.google.com/uc?id=1V-Dwfl6RXVpmKB2lZFIehhJcE5_rYs8i'
 output = 'PointSegDAdataset.rar'
 gdown.download(url, output, quiet=False)
