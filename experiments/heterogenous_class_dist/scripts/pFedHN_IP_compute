@@ -1,5 +1,5 @@
 # CIFAR-10
-python ../trainer.py --data-name cifar10 --data-path ../../datafolder --method pFedGP-compute --save-path ../output/pFedGP-IP
+python ../trainer_ip.py --data-name cifar10 --data-path ../../datafolder --method pFedGP-compute --save-path ../output/pFedGP-IP
 
 # CIFAR-100
-python ../trainer.py --data-name cifar100 --data-path ../../datafolder --method pFedGP-compute --lr 0.01 --inner-steps 3  --save-path ../output/pFedGP/pFedGP-IP
+python ../trainer_ip.py --data-name cifar100 --data-path ../../datafolder --method pFedGP-compute --lr 0.01 --inner-steps 3  --save-path ../output/pFedGP/pFedGP-IP
