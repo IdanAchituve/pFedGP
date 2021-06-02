@@ -401,6 +401,8 @@ for alpha_gen in args.alpha_gen:
                              alpha=alpha_gen,
                              batch_size=args.batch_size)
 
+    client_num_classes = client_counts(args.num_clients)
+
     # GPs
     ip_method = pFedGPIPDataLearner if args.method == 'pFedGP-data' \
         else pFedGPIPComputeLearner
@@ -408,7 +410,7 @@ for alpha_gen in args.alpha_gen:
     GPs = torch.nn.ModuleList([])
     for client_id in range(args.num_clients):
         # GP instance
-        GPs.append(ip_method(args, device))
+        GPs.append(ip_method(args, client_num_classes[client_id]))
 
     test_results = eval_model(net, range(args.num_novel_clients), GPs, X_bar, clients, split="test")
     avg_test_loss, avg_test_acc = calc_metrics(test_results)

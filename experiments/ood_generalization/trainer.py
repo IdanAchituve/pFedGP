@@ -349,11 +349,13 @@ for alpha_gen in args.alpha_gen:
                            alpha=alpha_gen,
                            batch_size=args.batch_size)
 
+    client_num_classes = client_counts(args.num_clients)
+
     # GPs
     GPs = torch.nn.ModuleList([])
     for client_id in range(args.num_clients):
         # GP instance
-        GPs.append(pFedGPFullLearner(args, device))
+        GPs.append(pFedGPFullLearner(args, client_num_classes[client_id]))
 
     test_results = eval_model(net, range(args.num_novel_clients), GPs, clients, split="test")
     avg_test_loss, avg_test_acc = calc_metrics(test_results)
