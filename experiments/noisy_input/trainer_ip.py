@@ -91,6 +91,7 @@ set_seed(args.seed)
 
 device = get_device(cuda=int(args.gpus) >= 0, gpus=args.gpus)
 num_classes = 10 if args.data_name == 'cifar10' else 100
+classes_per_client = 10
 
 exp_name = f'pFedGP-IP-Noisy_method_{args.method}_data-name_{args.data_name}_seed_{args.seed}_lr_{args.lr}_' \
            f'num_steps_{args.num_steps}_inner_steps_{args.inner_steps}_num_inducing_{args.num_inducing_points}' \
@@ -178,7 +179,7 @@ ip_method = pFedGPIPDataLearner if args.method == 'pFedGP-data'\
 GPs = torch.nn.ModuleList([])
 for client_id in range(args.num_clients):
     # GP instance
-    GPs.append(ip_method(args, num_classes))
+    GPs.append(ip_method(args, classes_per_client))
 
 # Inducing locations
 X_bar = nn.Parameter(torch.randn((num_classes, args.num_inducing_points, args.embed_dim), device=device) * 0.01,

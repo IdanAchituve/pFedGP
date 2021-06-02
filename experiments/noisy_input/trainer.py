@@ -84,6 +84,7 @@ set_seed(args.seed)
 
 device = get_device(cuda=int(args.gpus) >= 0, gpus=args.gpus)
 num_classes = 10 if args.data_name == 'cifar10' else 100
+classes_per_client = 10
 
 exp_name = f'pFedGP-Full-Noisy_seed_{args.seed}_data-name_{args.data_name}_' \
            f'lr_{args.lr}_num_steps_{args.num_steps}_inner_steps_{args.inner_steps}_' \
@@ -161,7 +162,7 @@ net = net.to(device)
 
 GPs = torch.nn.ModuleList([])
 for client_id in range(num_clients):
-    GPs.append(pFedGPFullLearner(args, num_classes))  # GP instances
+    GPs.append(pFedGPFullLearner(args, classes_per_client))  # GP instances
 
 
 def get_optimizer(network):

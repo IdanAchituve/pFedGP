@@ -83,7 +83,7 @@ set_logger()
 set_seed(args.seed)
 
 device = get_device(cuda=int(args.gpus) >= 0, gpus=args.gpus)
-num_classes = 10 if (args.data_name == 'cifar10' or args.data_name == 'cinic10') else 100
+num_classes = 10 if args.data_name == 'cifar10' else 100
 
 exp_name = f'pFedGP-OOD-Gen_{args.data_name}_num_clients_{args.num_clients}_seed_{args.seed}_' \
            f'lr_{args.lr}_num_steps_{args.num_steps}_inner_steps_{args.inner_steps}_' \
@@ -142,11 +142,29 @@ def eval_model(global_model, client_ids, GPs, clients, split):
 ###############################
 # init net and GP #
 ###############################
+def client_counts(num_clients, split='train'):
+    client_num_classes = {}
+    for client_id in range(num_clients):
+        if split == 'test':
+            curr_data = clients.test_loaders[client_id]
+        elif split == 'val':
+            curr_data = clients.val_loaders[client_id]
+        else:
+            curr_data = clients.train_loaders[client_id]
+
+        for i, batch in enumerate(curr_data):
+            img, label = tuple(t.to(device) for t in batch)
+            all_labels = label if i == 0 else torch.cat((all_labels, label))
+
+        client_labels, client_counts = torch.unique(all_labels, return_counts=True)
+        client_num_classes[client_id] = client_labels.shape[0]
+    return client_num_classes
+
 clients = GenBaseClients(args.data_name, args.data_path, args.num_clients,
                        n_gen_clients=args.num_novel_clients,
                        alpha=args.alpha,
                        batch_size=args.batch_size)
-gp_counter = 0
+client_num_classes = client_counts(args.num_clients)
 
 # NN
 net = CNNTarget(n_kernels=args.n_kernels, embedding_dim=args.embed_dim)
@@ -154,7 +172,7 @@ net = net.to(device)
 
 GPs = torch.nn.ModuleList([])
 for client_id in range(args.num_clients):
-    GPs.append(pFedGPFullLearner(args, num_classes))  # GP instances
+    GPs.append(pFedGPFullLearner(args, client_num_classes[client_id]))  # GP instances
 
 
 def get_optimizer(network):

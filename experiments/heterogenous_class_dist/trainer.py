@@ -163,7 +163,7 @@ net = net.to(device)
 
 GPs = torch.nn.ModuleList([])
 for client_id in range(args.num_clients):
-    GPs.append(pFedGPFullLearner(args, num_classes))  # GP instances
+    GPs.append(pFedGPFullLearner(args, classes_per_client))  # GP instances
 
 
 def get_optimizer(network):
