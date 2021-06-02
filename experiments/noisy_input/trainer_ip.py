@@ -115,7 +115,7 @@ def eval_model(global_model, GPs, X_bar, clients, split):
 
     global_model.eval()
 
-    for client_id in range(args.num_clients):
+    for client_id in range(num_clients):
         is_first_iter = True
         running_loss, running_correct, running_samples = 0., 0., 0.
         if split == 'test':
