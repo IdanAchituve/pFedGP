@@ -1,0 +1,5 @@
+# CIFAR-10
+python ../trainer.py --data-name cifar10 --data-path ../../datafolder --inner-steps 3 --save-path ../output/pFedGP
+
+# CIFAR-100
+python ../trainer.py --data-name cifar100 --data-path ../../datafolder --save-path ../output/pFedGP

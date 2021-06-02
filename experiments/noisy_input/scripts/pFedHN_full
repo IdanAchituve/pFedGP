@@ -1,0 +1,5 @@
+# CIFAR-10
+python ../trainer.py --data-name cifar10 --data-path ../../datafolder/noisy_cifar10/data_dictionary.pkl --save-path ../output/pFedGP
+
+# CIFAR-100
+python ../trainer.py --data-name cifar100 --data-path ../../datafolder/noisy_cifar100/data_dictionary.pkl --save-path ../output/pFedGP

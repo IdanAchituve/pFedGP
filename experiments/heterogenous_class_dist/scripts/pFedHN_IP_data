@@ -1,0 +1,5 @@
+# CIFAR-10
+python ../trainer.py --data-name cifar10 --data-path ../../datafolder --method pFedGP-data --loss-scaler 2 --save-path ../output/pFedGP-IP
+
+# CIFAR-100
+python ../trainer.py --data-name cifar100 --data-path ../../datafolder --method pFedGP-data --lr 0.01 --save-path ../output/pFedGP/pFedGP-IP

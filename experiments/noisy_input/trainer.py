@@ -36,14 +36,14 @@ parser.add_argument(
 ##################################
 parser.add_argument("--num-steps", type=int, default=1000)
 parser.add_argument("--optimizer", type=str, default='sgd', choices=['adam', 'sgd'], help="learning rate")
-parser.add_argument("--batch-size", type=int, default=64)
+parser.add_argument("--batch-size", type=int, default=512)
 parser.add_argument("--inner-steps", type=int, default=1, help="number of inner steps")
 parser.add_argument("--num-client-agg", type=int, default=5, help="number of kernels")
 
 ################################
 #       Model Prop args        #
 ################################
-parser.add_argument("--lr", type=float, default=1e-2, help="learning rate")
+parser.add_argument("--lr", type=float, default=5e-2, help="learning rate")
 parser.add_argument("--wd", type=float, default=1e-3, help="weight decay")
 parser.add_argument("--n-kernels", type=int, default=16, help="number of kernels")
 
