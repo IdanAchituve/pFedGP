@@ -8,7 +8,6 @@ import numpy as np
 import torch
 import torch.utils.data
 from tqdm import trange
-import wandb
 import copy
 
 from pFedGP.Learner import pFedGPFullLearner
@@ -301,14 +300,6 @@ for step in step_iter:
         params[n] = p / args.num_client_agg
     # update new parameters
     net.load_state_dict(params)
-
-    if args.wandb:
-        wandb.log(
-            {
-                'train_loss': train_avg_loss
-            },
-            step=step
-        )
 
     if (step + 1) % args.eval_every == 0 or (step + 1) == args.num_steps:
         val_results, labels_vs_preds_val = eval_model(net, GPs, clients, split="val")
