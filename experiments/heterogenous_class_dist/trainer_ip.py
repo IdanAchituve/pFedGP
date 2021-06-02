@@ -47,7 +47,7 @@ parser.add_argument("--lr", type=float, default=5e-2, help="learning rate")
 parser.add_argument("--wd", type=float, default=1e-3, help="weight decay")
 parser.add_argument("--n-kernels", type=int, default=16, help="number of kernels")
 
-parser.add_argument('--method', type=str, default='pFedGP-data',
+parser.add_argument('--method', type=str, default='pFedGP-compute',
                     choices=['pFedGP-data', 'pFedGP-compute'],
                     help='Inducing points method')
 parser.add_argument('--embed-dim', type=int, default=84, help='epoch to start training with GP')

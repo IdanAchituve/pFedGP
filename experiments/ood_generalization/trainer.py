@@ -38,7 +38,6 @@ parser.add_argument("--optimizer", type=str, default='sgd', choices=['adam', 'sg
 parser.add_argument("--batch-size", type=int, default=64)
 parser.add_argument("--inner-steps", type=int, default=1, help="number of inner steps")
 parser.add_argument("--num-client-agg", type=int, default=5, help="number of kernels")
-parser.add_argument("--num-client-agg", type=int, default=5, help="number of kernels")
 parser.add_argument("--num-novel-clients", type=int, default=10)
 
 ################################
