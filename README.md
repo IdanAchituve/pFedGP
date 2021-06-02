@@ -22,3 +22,12 @@ cd experiments/datafolder/noisy_cifar100
 python download_noisy_data.py
 ```
 
+To run pFedGP:
+```bash
+cd experiments/exp-type/scripts
+./pFedGP_model-variant
+```
+Where, exp-type is either heterogeneous_class_dist, noisy_input, or ood_generalization. And model-variant is either full, IP_compute, IP_data
+
+
+

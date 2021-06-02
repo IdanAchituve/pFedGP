@@ -1,4 +1,4 @@
-from experiments.heterogenous_class_dist.dataset import gen_random_loaders
+from experiments.heterogeneous_class_dist.dataset import gen_random_loaders
 
 
 class BaseClients:

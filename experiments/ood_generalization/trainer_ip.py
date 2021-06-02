@@ -54,7 +54,6 @@ parser.add_argument('--method', type=str, default='pFedGP-data',
                     choices=['pFedGP-data', 'pFedGP-compute'],
                     help='Inducing points method')
 parser.add_argument('--embed-dim', type=int, default=84, help='epoch to start training with GP')
-parser.add_argument('--move-to-gp-step', type=int, default=0, help='epoch to start training with GP')
 parser.add_argument('--loss-scaler', default=1., type=float, help='weight decay')
 parser.add_argument('--kernel-function', type=str, default='RBFKernel',
                     choices=['RBFKernel', 'LinearKernel', 'MaternKernel'],
@@ -64,7 +63,6 @@ parser.add_argument('--objective', type=str, default='predictive_likelihood',
 parser.add_argument('--predict-ratio', type=float, default=0.5,
                     help='ratio of samples to allocate for test part when optimizing the predictive_likelihood')
 parser.add_argument('--num-inducing-points', type=int, default=100, help='number of inducing points per class')
-parser.add_argument('--batched-gp', type=str2bool, default=False, help='Batch or entier datafolder')
 parser.add_argument('--num-gibbs-steps-train', type=int, default=5, help='number of sampling iterations')
 parser.add_argument('--num-gibbs-draws-train', type=int, default=20, help='number of parallel gibbs chains')
 parser.add_argument('--num-gibbs-steps-test', type=int, default=5, help='number of sampling iterations')
@@ -235,7 +233,6 @@ best_acc = -1
 test_best_based_on_step, test_best_min_based_on_step = -1, -1
 test_best_max_based_on_step, test_best_std_based_on_step = -1, -1
 step_iter = trange(args.num_steps)
-built_tree = False
 
 results = defaultdict(list)
 best_model = copy.deepcopy(net)
@@ -272,12 +269,7 @@ for step in step_iter:
         optimizer = get_optimizer(curr_global_net, curr_X_bar)
 
         # build tree at each step
-        if (step + 1) >= args.move_to_gp_step:
-            GPs[client_id], label_map, _, __ = build_tree(clients, client_id, curr_X_bar)
-            built_tree = True
-        else:
-            label_map = offset_client_classes(clients.train_loaders[client_id])
-
+        GPs[client_id], label_map, _, __ = build_tree(clients, client_id, curr_X_bar)
         GPs[client_id].train()
 
         for i in range(args.inner_steps):
@@ -286,46 +278,20 @@ for step in step_iter:
             optimizer.zero_grad()
 
             # With GP take all data
-            if built_tree:
-                if args.batched_gp:
-                    # get data
-                    batch = next(iter(clients.train_loaders[client_id]))
-                    img, label = tuple(t.to(device) for t in batch)
-                    z = curr_global_net(img)
+            for k, batch in enumerate(clients.train_loaders[client_id]):
+                batch = (t.to(device) for t in batch)
+                img, label = batch
 
-                    offset_labels = torch.tensor([label_map[l.item()] for l in label], dtype=label.dtype,
-                                                 device=label.device)
-                    client_X_bar = curr_X_bar[list(label_map.keys()), ...]
-                    loss = GPs[client_id](z, offset_labels, client_X_bar, to_print=to_print)
-                    loss *= args.loss_scaler
-                else:
-                    for k, batch in enumerate(clients.train_loaders[client_id]):
-                        batch = (t.to(device) for t in batch)
-                        img, label = batch
+                z = curr_global_net(img)
+                X = torch.cat((X, z), dim=0) if k > 0 else z
+                Y = torch.cat((Y, label), dim=0) if k > 0 else label
 
-                        z = curr_global_net(img)
-                        X = torch.cat((X, z), dim=0) if k > 0 else z
-                        Y = torch.cat((Y, label), dim=0) if k > 0 else label
+            offset_labels = torch.tensor([label_map[l.item()] for l in Y], dtype=Y.dtype,
+                                         device=Y.device)
+            client_X_bar = curr_X_bar[list(label_map.keys()), ...]
 
-                    offset_labels = torch.tensor([label_map[l.item()] for l in Y], dtype=Y.dtype,
-                                                 device=Y.device)
-                    client_X_bar = curr_X_bar[list(label_map.keys()), ...]
-
-                    loss = GPs[client_id](X, offset_labels, client_X_bar, to_print=to_print)
-                    loss *= args.loss_scaler
-
-            # on pre-training stage sample data
-            else:
-                # get data
-                batch = next(iter(clients.train_loaders[client_id]))
-                img, label = tuple(t.to(device) for t in batch)
-
-                offset_labels = torch.tensor([label_map[l.item()] for l in label], dtype=label.dtype,
-                                             device=label.device)
-
-                # get loss
-                features = curr_global_net(img)
-                loss = GPs[client_id](features, offset_labels, to_print=to_print)
+            loss = GPs[client_id](X, offset_labels, client_X_bar, to_print=to_print)
+            loss *= args.loss_scaler
 
             # propagate loss
             loss.backward()

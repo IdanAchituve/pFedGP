@@ -48,7 +48,6 @@ parser.add_argument("--wd", type=float, default=1e-3, help="weight decay")
 parser.add_argument("--n-kernels", type=int, default=16, help="number of kernels")
 
 parser.add_argument('--embed-dim', type=int, default=84, help='epoch to start training with GP')
-parser.add_argument('--move-to-gp-step', type=int, default=0, help='epoch to start training with GP')
 parser.add_argument('--loss-scaler', default=1., type=float, help='weight decay')
 parser.add_argument('--kernel-function', type=str, default='RBFKernel',
                     choices=['RBFKernel', 'LinearKernel', 'MaternKernel'],
@@ -203,7 +202,6 @@ best_acc = -1
 test_best_based_on_step, test_best_min_based_on_step = -1, -1
 test_best_max_based_on_step, test_best_std_based_on_step = -1, -1
 step_iter = trange(args.num_steps)
-built_tree = False
 
 results = defaultdict(list)
 
@@ -234,12 +232,7 @@ for step in step_iter:
         optimizer = get_optimizer(curr_global_net)
 
         # build tree at each step
-        if (step + 1) >= args.move_to_gp_step:
-            GPs[client_id], label_map, _, __ = build_tree(clients, client_id)
-            built_tree = True
-        else:
-            label_map = offset_client_classes(clients.train_loaders[client_id])
-
+        GPs[client_id], label_map, _, __ = build_tree(clients, client_id)
         GPs[client_id].train()
 
         for i in range(args.inner_steps):
@@ -248,33 +241,19 @@ for step in step_iter:
             optimizer.zero_grad()
 
             # With GP take all data
-            if built_tree:
-                for k, batch in enumerate(clients.train_loaders[client_id]):
-                    batch = (t.to(device) for t in batch)
-                    img, label = batch
+            for k, batch in enumerate(clients.train_loaders[client_id]):
+                batch = (t.to(device) for t in batch)
+                img, label = batch
 
-                    z = curr_global_net(img)
-                    X = torch.cat((X, z), dim=0) if k > 0 else z
-                    Y = torch.cat((Y, label), dim=0) if k > 0 else label
+                z = curr_global_net(img)
+                X = torch.cat((X, z), dim=0) if k > 0 else z
+                Y = torch.cat((Y, label), dim=0) if k > 0 else label
 
-                offset_labels = torch.tensor([label_map[l.item()] for l in Y], dtype=Y.dtype,
-                                             device=Y.device)
+            offset_labels = torch.tensor([label_map[l.item()] for l in Y], dtype=Y.dtype,
+                                         device=Y.device)
 
-                loss = GPs[client_id](X, offset_labels, to_print=to_print)
-                loss *= args.loss_scaler
-
-            # on pre-training stage sample data
-            else:
-                # get data
-                batch = next(iter(clients.train_loaders[client_id]))
-                img, label = tuple(t.to(device) for t in batch)
-
-                offset_labels = torch.tensor([label_map[l.item()] for l in label], dtype=label.dtype,
-                                             device=label.device)
-
-                # get loss
-                features = curr_global_net(img)
-                loss = GPs[client_id](features, offset_labels, to_print=to_print)
+            loss = GPs[client_id](X, offset_labels, to_print=to_print)
+            loss *= args.loss_scaler
 
             # propagate loss
             loss.backward()
