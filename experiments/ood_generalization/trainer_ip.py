@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(description="Personalized Federated Learning")
 #       Dataset Args        #
 #############################
 parser.add_argument(
-    "--data-name", type=str, default="cifar10", choices=['cifar10', 'cifar100'],
+    "--data-name", type=str, default="cifar10", choices=['cifar10'],
 )
 parser.add_argument("--data-path", type=str, default="../datafolder", help="dir path for CIFAR datafolder")
 parser.add_argument("--num-clients", type=int, default=100, help="number of simulated clients")

@@ -5,8 +5,20 @@ Federated learning aims to learn a global model that performs well on client dev
 However, applying GPs to PFL raises multiple challenges. Mainly, GPs performance depends heavily on access to a good kernel function, and learning a kernel requires a large training set. To address this, we propose learning a single kernel function, parameterized by a neural network, shared by all clients using a personal GP classifier for each client. We further extend pFedGP to include inducing points, using two novel methods. We derive a PAC-Bayes generalization bound on novel clients and empirically show that it gives non-vacuous guarantees. We perform extensive experiments on standard PFL benchmarks as well as a new setup of learning under input noise. We find that pFedGP significantly outperforms baseline methods while achieving well-calibrated predictions. 
 
 ### Instructions
-1. Install repo:
+Install repo:
 ```bash
 pip install -e .
+```
+
+To download noisy CIFAR-10:
+```bash
+cd experiments/datafolder/noisy_cifar10
+python download_noisy_data.py
+```
+
+To download noisy CIFAR-100:
+```bash
+cd experiments/datafolder/noisy_cifar100
+python download_noisy_data.py
 ```
 

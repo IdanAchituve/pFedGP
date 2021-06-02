@@ -27,9 +27,9 @@ parser = argparse.ArgumentParser(description="Personalized Federated Learning")
 parser.add_argument(
         "--data-path", type=str, default='../datafolder/noisy_cifar100/data_dictionary.pkl',
         help='data path'
-    )
+)
 parser.add_argument(
-    "--data-name", type=str, default="cifar10", choices=['cifar10', 'cifar100'],
+    "--data-name", type=str, default="cifar100", choices=['cifar10', 'cifar100'],
     help="data name"
 )
 

@@ -28,7 +28,7 @@ parser.add_argument(
         help='data path'
     )
 parser.add_argument(
-    "--data-name", type=str, default="cifar10", choices=['cifar10', 'cifar100'],
+    "--data-name", type=str, default="cifar100", choices=['cifar10', 'cifar100'],
     help="data name"
 )
 
