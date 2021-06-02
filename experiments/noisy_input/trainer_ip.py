@@ -177,7 +177,7 @@ ip_method = pFedGPIPDataLearner if args.method == 'pFedGP-data'\
             else pFedGPIPComputeLearner
 
 GPs = torch.nn.ModuleList([])
-for client_id in range(args.num_clients):
+for client_id in range(num_clients):
     # GP instance
     GPs.append(ip_method(args, classes_per_client))
 
