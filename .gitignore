@@ -136,3 +136,5 @@ dataset/
 figures/
 output/
 datasets/
+
+*.out
