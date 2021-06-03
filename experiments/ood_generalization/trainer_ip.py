@@ -60,7 +60,7 @@ parser.add_argument('--kernel-function', type=str, default='RBFKernel',
                     help='kernel function')
 parser.add_argument('--objective', type=str, default='predictive_likelihood',
                     choices=['predictive_likelihood', 'marginal_likelihood'])
-parser.add_argument('--predict-ratio', type=float, default=0.3,
+parser.add_argument('--predict-ratio', type=float, default=0.5,
                     help='ratio of samples to allocate for test part when optimizing the predictive_likelihood')
 parser.add_argument('--num-inducing-points', type=int, default=100, help='number of inducing points per class')
 parser.add_argument('--num-gibbs-steps-train', type=int, default=5, help='number of sampling iterations')
