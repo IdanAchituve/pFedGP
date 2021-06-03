@@ -45,8 +45,8 @@ parser.add_argument("--n-kernels", type=int, default=16, help="number of kernels
 ################################
 #       GP args        #
 ################################
-parser.add_argument('--embed-dim', type=int, default=84, help='epoch to start training with GP')
-parser.add_argument('--loss-scaler', default=1., type=float, help='weight decay')
+parser.add_argument('--embed-dim', type=int, default=84)
+parser.add_argument('--loss-scaler', default=1., type=float, help='multiplicative element to the loss function')
 parser.add_argument('--kernel-function', type=str, default='RBFKernel',
                     choices=['RBFKernel', 'LinearKernel', 'MaternKernel'],
                     help='kernel function')
