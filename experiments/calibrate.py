@@ -7,6 +7,7 @@ if "DISPLAY" not in os.environ or "localhost" in os.environ["DISPLAY"]:
 import matplotlib.pyplot as plt
 from utils import *
 import logging
+import torch.nn.functional as F
 
 
 class ECELoss(nn.Module):
