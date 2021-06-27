@@ -206,7 +206,7 @@ class pFedGPIPCompute(nn.Module):
         L_f_prior = torch.sqrt(Knn_Minus_Knm_Kmm_Kmn)
         f_init = mu_f_prior + L_f_prior.matmul(SN)  # N x ND
 
-        # sample from prior C*N*ND variables
+        # TODO: sample from actual PG prior
         omega_init = self.sample_omega(f_init, model_state)
 
         return SBGibbsState(omega_init, f_init)
@@ -217,7 +217,7 @@ class pFedGPIPCompute(nn.Module):
 
         return SBGibbsState(omega_new, f_new)
 
-    # P(ω | Y, ψ)
+    # P(ω | Y, f)
     def sample_omega(self, f, model_state):
         """"
         Sample from polya-gamma distribution.
@@ -239,7 +239,7 @@ class pFedGPIPCompute(nn.Module):
         dist = self.gaussian_posterior(omega, model_state)
         return dist.rsample()
 
-    # P(ψ | Y, ω, X)
+    # P(f | Y, ω, X)
     def gaussian_posterior(self, omega, model_state, X_star=None, X_bar=None):
         M = model_state.M
         kappa = model_state.kappa  # N x 1

@@ -187,7 +187,7 @@ class pFedGPFull(nn.Module):
         f_init = model_state.mu.unsqueeze(0) + L.matmul(SN)
         f_init = f_init.squeeze(-1)
 
-        # sample from prior C*N*ND variables
+        # TODO: sample from actual PG prior
         omega_init = self.sample_omega(f_init, model_state)
 
         return SBGibbsState(omega_init, f_init)
@@ -198,7 +198,7 @@ class pFedGPFull(nn.Module):
 
         return SBGibbsState(omega_new, f_new)
 
-    # P(ω | Y, ψ)
+    # P(ω | Y, f)
     def sample_omega(self, f, model_state):
         """"
         Sample from polya-gamma distribution.
@@ -216,7 +216,7 @@ class pFedGPFull(nn.Module):
         omega = torch.tensor(ret, dtype=f.dtype, device=f.device).view(self.num_draws, N)  # [ND, N]
         return omega
 
-    # P(ψ | Y, ω, X)
+    # P(f | Y, ω, X)
     def gaussian_conditional(self, omega, model_state):
         kappa = model_state.kappa.t()
         #Ω = torch.diag_embed(omega)
@@ -276,7 +276,7 @@ class pFedGPFull(nn.Module):
         mll = - mll.mean()
         return mll
 
-    # P(ψ^* | ω, Y, x^*, X)) & P(y^* | ψ^*)
+    # P(f^* | ω, Y, x^*, X)) & P(y^* | f^*)
     def predictive_dist(self, model_state, gibbs_state, X_star, X):
 
         omega = gibbs_state.omega  # ND x N
@@ -478,8 +478,8 @@ class pFedGPFullBound(pFedGPFull):
 
         # empirical risk
         dist = self.predictive_dist(model_state, gibbs_state, X, X)
-        #dist = f_dist  # Q(ψ | X, Y, ω)
-        # sample 1000 functions from the posterior: ψ ~ Q(ψ | X, S, ω)
+        #dist = f_dist  # Q(f | X, Y, ω)
+        # sample 1000 functions from the posterior: f ~ Q(f | X, S, ω)
         train_preds = dist.rsample(torch.tensor([300]))  # [#samples, ND, N]
         Y_train = 1 - Y.unsqueeze(0).unsqueeze(0)  # the model considers 0's as 1's and vice versa
         preds_sign = torch.sign(train_preds)
@@ -567,12 +567,12 @@ class pFedGPFullBound(pFedGPFull):
         f_init = model_state.mu.unsqueeze(0) + L.matmul(SN)
         f_init = f_init.squeeze(-1)
 
-        # sample from prior C*N*ND variables
+        # TODO: sample from actual PG prior
         omega_init, _ = self.sample_omega(f_init, model_state)
 
         return SBGibbsState(omega_init, f_init)
 
-    # P(ω | Y, ψ)
+    # P(ω | Y, f)
     def sample_omega(self, f, model_state):
         """"
         Sample from polya-gamma distribution.
@@ -592,7 +592,7 @@ class pFedGPFullBound(pFedGPFull):
 
         return omega, log_post_omega
 
-    # P(ψ | Y, ω, X)
+    # P(f | Y, ω, X)
     def gaussian_conditional(self, omega, model_state):
         kappa = model_state.kappa.t()
         # Ω = torch.diag_embed(omega)
