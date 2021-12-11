@@ -8,9 +8,9 @@ import torch.nn.functional as F
 
 from utils import *
 
-SBGibbsState = namedtuple("SBGibbsState", ["omega", "f"])
-SBModelState = namedtuple(
-    "SBModelState",
+NodeGibbsState = namedtuple("NodeGibbsState", ["omega", "f"])
+NodeModelState = namedtuple(
+    "NodeModelState",
     ["N", "N_sb", "mu", "K", "L", "Kinv", "Kinv_mu", "X", "Y", "C", "kappa"],
 )
 
@@ -151,7 +151,7 @@ class pFedGPFull(nn.Module):
         N_sb = N_vec(Y_one_hot).repeat(self.num_draws, 1)
         kappa = kappa_vec(Y_one_hot)
 
-        return SBModelState(
+        return NodeModelState(
             N=N,
             N_sb=N_sb,
             mu=mu,
@@ -190,13 +190,13 @@ class pFedGPFull(nn.Module):
         # TODO: sample from actual PG prior
         omega_init = self.sample_omega(f_init, model_state)
 
-        return SBGibbsState(omega_init, f_init)
+        return NodeGibbsState(omega_init, f_init)
 
     def next_gibbs_state(self, model_state, gibbs_state):
         f_new = self.gaussian_conditional(gibbs_state.omega, model_state)
         omega_new = self.sample_omega(f_new, model_state)
 
-        return SBGibbsState(omega_new, f_new)
+        return NodeGibbsState(omega_new, f_new)
 
     # P(ω | Y, f)
     def sample_omega(self, f, model_state):
@@ -333,7 +333,7 @@ class pFedGPFull(nn.Module):
         Kinv_mu = model_state.Kinv_mu.detach().clone()
         kappa = model_state.kappa.detach().clone()
 
-        self.last_model_state = SBModelState(
+        self.last_model_state = NodeModelState(
                                     N=N,
                                     N_sb=N_sb,
                                     mu=mu,
@@ -346,7 +346,7 @@ class pFedGPFull(nn.Module):
                                     C=C,
                                     kappa=kappa
                                 )
-        self.last_gibbs_state = SBGibbsState(gibbs_state.omega.detach().clone(),
+        self.last_gibbs_state = NodeGibbsState(gibbs_state.omega.detach().clone(),
                                              gibbs_state.f.detach().clone())
 
 
@@ -542,7 +542,7 @@ class pFedGPFullBound(pFedGPFull):
 
             if i >= self.start_collect and i % collect_every == 0:
                 for chain in range(self.num_draws):
-                    samples.append((SBGibbsState(gibbs_state.omega[chain:chain+1, ...].detach().clone(),
+                    samples.append((NodeGibbsState(gibbs_state.omega[chain:chain+1, ...].detach().clone(),
                                                  gibbs_state.f[chain:chain+1, ...].detach().clone()),
                                     log_post_omega[chain]))
 
@@ -553,7 +553,7 @@ class pFedGPFullBound(pFedGPFull):
         f_new = f_dist.rsample()
         omega_new, log_post_omega = self.sample_omega(f_new, model_state)
 
-        return SBGibbsState(omega_new, f_new), log_post_omega, f_dist
+        return NodeGibbsState(omega_new, f_new), log_post_omega, f_dist
 
     def initial_gibbs_state(self, model_state):
 
@@ -570,7 +570,7 @@ class pFedGPFullBound(pFedGPFull):
         # TODO: sample from actual PG prior
         omega_init, _ = self.sample_omega(f_init, model_state)
 
-        return SBGibbsState(omega_init, f_init)
+        return NodeGibbsState(omega_init, f_init)
 
     # P(ω | Y, f)
     def sample_omega(self, f, model_state):

@@ -8,9 +8,9 @@ import torch.nn.functional as F
 
 from utils import *
 
-SBGibbsState = namedtuple("SBGibbsState", ["omega", "f"])
-SBModelState = namedtuple(
-    "SBModelState",
+NodeGibbsState = namedtuple("NodeGibbsState", ["omega", "f"])
+NodeModelState = namedtuple(
+    "NodeModelState",
     ["Y", "M", "N", "N_sb", "kappa", "mu", "K", "L",
      "Knm_Kmminv_kmn", "Knm_Kmminv_mu", "Knn_Minus_Knm_Kmm_Kmn"],
 )
@@ -159,7 +159,7 @@ class pFedGPIPCompute(nn.Module):
         N_sb = N_vec(Y_one_hot).repeat(self.num_draws, 1)
         kappa = kappa_vec(Y_one_hot)
 
-        return SBModelState(
+        return NodeModelState(
             Y=Y.clone(),
             M=M,
             N=N,
@@ -209,13 +209,13 @@ class pFedGPIPCompute(nn.Module):
         # TODO: sample from actual PG prior
         omega_init = self.sample_omega(f_init, model_state)
 
-        return SBGibbsState(omega_init, f_init)
+        return NodeGibbsState(omega_init, f_init)
 
     def next_gibbs_state(self, model_state, gibbs_state):
         f_new = self.sample_f(gibbs_state.omega, model_state)
         omega_new = self.sample_omega(f_new, model_state)
 
-        return SBGibbsState(omega_new, f_new)
+        return NodeGibbsState(omega_new, f_new)
 
     # P(ω | Y, f)
     def sample_omega(self, f, model_state):
@@ -341,7 +341,7 @@ class pFedGPIPCompute(nn.Module):
         N_sb = model_state.N_sb
         kappa = model_state.kappa
 
-        self.last_model_state = SBModelState(
+        self.last_model_state = NodeModelState(
             Y=model_state.Y.clone(),
             M=M,
             N=N,
@@ -354,5 +354,5 @@ class pFedGPIPCompute(nn.Module):
             Knm_Kmminv_mu=Knm_Kmminv_mu,
             Knn_Minus_Knm_Kmm_Kmn=Knn_Minus_Knm_Kmm_Kmn
         )
-        self.last_gibbs_state = SBGibbsState(gibbs_state.omega.detach().clone(),
+        self.last_gibbs_state = NodeGibbsState(gibbs_state.omega.detach().clone(),
                                              gibbs_state.f.detach().clone())
