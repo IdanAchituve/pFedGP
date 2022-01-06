@@ -24,7 +24,7 @@ parser = argparse.ArgumentParser(description="Personalized Federated Learning")
 #       Dataset Args        #
 #############################
 parser.add_argument(
-    "--data-name", type=str, default="cifar10", choices=['cifar10', 'cifar100'],
+    "--data-name", type=str, default="cifar10", choices=['cifar10', 'cifar100', 'cinic10'],
 )
 parser.add_argument("--data-path", type=str, default="../datafolder", help="dir path for CIFAR datafolder")
 parser.add_argument("--num-clients", type=int, default=50, help="number of simulated clients")
@@ -80,8 +80,8 @@ set_logger()
 set_seed(args.seed)
 
 device = get_device(cuda=int(args.gpus) >= 0, gpus=args.gpus)
-num_classes = 10 if args.data_name == 'cifar10' else 100
-classes_per_client = 2 if args.data_name == 'cifar10' else 10
+num_classes = 10 if args.data_name in ('cifar10', 'cinic10') else 100
+classes_per_client = 2 if args.data_name == 'cifar10' else 10 if args.data_name == 'cifar100' else 4
 
 exp_name = f'pFedGP-Full_{args.data_name}_num_clients_{args.num_clients}_seed_{args.seed}_' \
            f'lr_{args.lr}_num_steps_{args.num_steps}_inner_steps_{args.inner_steps}_' \
@@ -154,7 +154,6 @@ def eval_model(global_model, GPs, clients, split):
 clients = BaseClients(args.data_name, args.data_path, args.num_clients,
                     classes_per_client=classes_per_client,
                     batch_size=args.batch_size)
-gp_counter = 0
 
 # NN
 net = CNNTarget(n_kernels=args.n_kernels, embedding_dim=args.embed_dim)

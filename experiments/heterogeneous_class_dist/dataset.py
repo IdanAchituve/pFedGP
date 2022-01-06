@@ -1,6 +1,7 @@
 import random
 from collections import defaultdict
-
+import pickle
+from pathlib import Path
 import numpy as np
 import torch.utils.data
 import torchvision.transforms as transforms
@@ -53,8 +54,12 @@ def get_datasets(data_name, dataroot, normalize=True, val_size=10000):
 
         train_size = len(dataset) - val_size
         train_set, val_set = torch.utils.data.random_split(dataset, [train_size, val_size])
+
+    elif data_name == 'cinic10':
+        train_set, val_set, test_set = get_cinic_dataset(dataroot)
+
     else:
-        raise ValueError("choose data_name from ['cifar10', 'cifar100']")
+        raise ValueError("choose data_name from ['cifar10', 'cifar100', 'cinic10]")
 
     return train_set, val_set, test_set
 
@@ -192,6 +197,24 @@ def gen_random_loaders(data_name, data_path, num_users, bz, classes_per_user, no
     return dataloaders
 
 
-if __name__ == '__main__':
-    d = gen_random_loaders("controlled_cifar10", "data", 50, 64, 2, 12000)
-    print("debug")
+def get_dataset_split(pkl_path, split):
+    if not isinstance(pkl_path, Path):
+        pkl_path = Path(pkl_path)
+    data = []
+    for i in ("x", "y"):
+        file = pkl_path / "_".join([i, split, "dataset.pkl"])
+        with open(file, "rb") as file:
+            data.append(pickle.load(file))
+    x, y = data
+    x = x / 255.0
+    x = torch.from_numpy(x.astype(np.float32)).permute(0, 3, 1, 2)
+    y = torch.from_numpy(y.astype(np.long))
+    dataset = torch.utils.data.TensorDataset(x, y)
+    return dataset
+
+
+def get_cinic_dataset(pkl_path):
+    datasets = []
+    for split in ("train", "valid", "test"):
+        datasets.append(get_dataset_split(pkl_path, split))
+    return datasets
