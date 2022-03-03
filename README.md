@@ -35,10 +35,11 @@ Where, exp-type is either heterogeneous_class_dist, noisy_input, or ood_generali
 ### Citation
 Please cite this paper if you want to use it in your work,
 ```
-@inproceedings{achituve2021personalized,
-  title={Personalized Federated Learning with {G}aussian Processes},
+@article{achituve2021personalized,
+  title={Personalized Federated Learning with Gaussian Processes},
   author={Achituve, Idan and Shamsian, Aviv and Navon, Aviv and Chechik, Gal and Fetaya, Ethan},
-  booktitle={Proceedings of the 35th Conference on Neural Information Processing Systems},
+  journal={Advances in Neural Information Processing Systems},
+  volume={34},
   year={2021}
 }
 ```
